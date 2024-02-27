@@ -20,23 +20,17 @@ const server = http.createServer((req, res)=> {
             console.log('body',body);
         });
         
-        req.on('end',()=>{
+        return req.on('end',()=>{
             console.log('Buffer',Buffer);
             const parsedBody = Buffer.concat(body).toString();
             console.log('parsedBody', parsedBody);
             const message = parsedBody.split('=')[1];
-            fs.writeFileSync('message.txt', message);
-        })
-        // res.statusCode = 302;
-        // res.setHeader('Location','/');
-        res.writeHead(302,
-            {
-                'Content-Type': 'text/html',
-                'Location': '/'
+            fs.writeFile('message.txt', message, (err)=> {
+                res.statusCode = 302;
+                res.setHeader('Location','/');
+                return res.end();
             });
-        
-        return res.end();
-
+        })
     }
 
     res.setHeader('Content-Type', 'text/html');
